@@ -105,12 +105,25 @@ func getToken(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func checkToken(r *http.Request) bool {
+	authorizationHeader := r.Header.Get("Authorization")
+	if !strings.Contains(authorizationHeader, "Token") {
+		return false
+	}
+	tokenString := strings.Replace(authorizationHeader, "Token ", "", -1)
+
+	if tokenString != token {
+		return false
+	}
+	return true
+}
+
 func getWallet(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	// var body map[string]interface{}
 	if r.Method == "POST" {
-		authorizationHeader := r.Header.Get("Authorization")
-		if !strings.Contains(authorizationHeader, "Token") {
+		checkAuth := checkToken(r)
+		if checkAuth == false {
 			w.WriteHeader(http.StatusExpectationFailed)
 			response := errorMethod("fail", "invalid token")
 			json.NewEncoder(w).Encode(response)
@@ -125,8 +138,8 @@ func getWallet(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response)
 		return
 	} else if r.Method == "GET" {
-		authorizationHeader := r.Header.Get("Authorization")
-		if !strings.Contains(authorizationHeader, "Token") {
+		checkAuth := checkToken(r)
+		if checkAuth == false {
 			w.WriteHeader(http.StatusExpectationFailed)
 			response := errorMethod("fail", "invalid token")
 			json.NewEncoder(w).Encode(response)
@@ -141,8 +154,8 @@ func getWallet(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response)
 		return
 	} else if r.Method == "PATCH" {
-		authorizationHeader := r.Header.Get("Authorization")
-		if !strings.Contains(authorizationHeader, "Token") {
+		checkAuth := checkToken(r)
+		if checkAuth == false {
 			w.WriteHeader(http.StatusExpectationFailed)
 			response := errorMethod("fail", "invalid token")
 			json.NewEncoder(w).Encode(response)
@@ -171,8 +184,8 @@ func getTransactions(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	// var body map[string]interface{}
 	if r.Method == "GET" {
-		authorizationHeader := r.Header.Get("Authorization")
-		if !strings.Contains(authorizationHeader, "Token") {
+		checkAuth := checkToken(r)
+		if checkAuth == false {
 			w.WriteHeader(http.StatusExpectationFailed)
 			response := errorMethod("fail", "invalid token")
 			json.NewEncoder(w).Encode(response)
@@ -198,8 +211,8 @@ func getDeposit(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	if r.Method == "POST" {
-		authorizationHeader := r.Header.Get("Authorization")
-		if !strings.Contains(authorizationHeader, "Token") {
+		checkAuth := checkToken(r)
+		if checkAuth == false {
 			w.WriteHeader(http.StatusExpectationFailed)
 			response := errorMethod("fail", "invalid token")
 			json.NewEncoder(w).Encode(response)
@@ -225,8 +238,8 @@ func getWithdrawals(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	if r.Method == "POST" {
-		authorizationHeader := r.Header.Get("Authorization")
-		if !strings.Contains(authorizationHeader, "Token") {
+		checkAuth := checkToken(r)
+		if checkAuth == false {
 			w.WriteHeader(http.StatusExpectationFailed)
 			response := errorMethod("fail", "invalid token")
 			json.NewEncoder(w).Encode(response)
